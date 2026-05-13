@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Remembrance Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111827;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .game {
+      background: #1f2937;
+      padding: 20px 24px;
+      border-radius: 10px;
+      width: 420px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 22px;
+    }
+    .row {
+      margin-bottom: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    select, button, input {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+    }
+    select, input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #4b5563;
+      cursor: default;
+    }
+    .label {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+    .display-box {
+      margin: 12px 0;
+      padding: 10px;
+      border-radius: 6px;
+      background: #111827;
+      text-align: center;
+      font-size: 20px;
+      letter-spacing: 2px;
+      min-height: 32px;
+    }
+    .info {
+      font-size: 13px;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+    }
+    .result {
+      margin-top: 8px;
+      font-size: 14px;
+      min-height: 18px;
+    }
+    .correct { color: #22c55e; }
+    .wrong { color: #f97316; }
+    .score {
+      margin-top: 6px;
+      font-size: 14px;
+      text-align: right;
+      color: #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <h1>Remembrance Test</h1>
+
+    <div class="row">
+      <div style="flex:1;">
+        <div class="label">Mode</div>
+        <select id="modeSelect">
+          <option value="code">Code</option>
+          <option value="words">Words</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <div class="label">Difficulty</div>
+        <select id="difficultySelect">
+          <option value="easy">Easy</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="startBtn" style="flex:1;">Start Round</button>
+    </div>
+
+    <div class="display-box" id="displayArea"></div>
+
+    <div class="info">
+      <span id="timerLabel">Time: -</span>
+      <span id="lengthLabel">Length: -</span>
+    </div>
+
+    <div class="row">
+      <div style="flex:1;">
+        <div class="label">Your Input</div>
+        <input id="answerInput" type="text" autocomplete="off" disabled />
+      </div>
+      <button id="submitBtn" disabled>Submit</button>
+    </div>
+
+    <div class="result" id="resultText"></div>
+    <div class="score" id="scoreText">Score: 0</div>
+  </div>
+
+  <script>
+    // --- CONFIG ---
+
+    const codeLengths = {
+      easy: 5,
+      intermediate: 7,
+      hard: 10
+    };
+
+    const times = {
+      easy: 5,
+      intermediate: 3,
+      hard: 1
+    };
+
+    const wordPools = {
+      easy: [
+        "flame", "crisp", "vivid", "shard", "lunar", "prism", "ember"
+      ], // 5 letters
+      intermediate: [
+        "crystal", "shimmer", "radiant", "horizon", "spectra", "velvety", "amplify"
+      ], // 7 letters
+      hard: [
+        "luminosity", "reflection", "stargazers", "afterglow", "resonating", "spellbound"
+      ] // 10 letters (or close; you can tweak)
+    };
+
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    // --- STATE ---
+
+    let currentAnswer = "";
+    let currentTimer = null;
+    let timeLeft = 0;
+    let score = 0;
+    let showingPhase = false; // true while code/word is visible
+
+    // --- ELEMENTS ---
+
+    const modeSelect = document.getElementById("modeSelect");
+    const difficultySelect = document.getElementById("difficultySelect");
+    const startBtn = document.getElementById("startBtn");
+    const displayArea = document.getElementById("displayArea");
+    const timerLabel = document.getElementById("timerLabel");
+    const lengthLabel = document.getElementById("lengthLabel");
+    const answerInput = document.getElementById("answerInput");
+    const submitBtn = document.getElementById("submitBtn");
+    const resultText = document.getElementById("resultText");
+    const scoreText = document.getElementById("scoreText");
+
+    // --- HELPERS ---
+
+    function randomFromArray(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateCode(length) {
+      let out = "";
+      for (let i = 0; i < length; i++) {
+        out += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return out;
+    }
+
+    function generateWord(difficulty) {
+      const pool = wordPools[difficulty];
+      return randomFromArray(pool);
+    }
+
+    function setTimer(seconds, onEnd) {
+      clearInterval(currentTimer);
+      timeLeft = seconds;
+      timerLabel.textContent = "Time: " + timeLeft.toFixed(1) + "s";
+
+      currentTimer = setInterval(() => {
+        timeLeft -= 0.1;
+        if (timeLeft <= 0) {
+          clearInterval(currentTimer);
+          timerLabel.textContent = "Time: 0.0s";
+          onEnd();
+        } else {
+          timerLabel.textContent = "Time: " + timeLeft.toFixed(1) + "s";
+        }
+      }, 100);
+    }
+
+    function resetUI() {
+      displayArea.textContent = "";
+      answerInput.value = "";
+      answerInput.disabled = true;
+      submitBtn.disabled = true;
+      resultText.textContent = "";
+      timerLabel.textContent = "Time: -";
+      lengthLabel.textContent = "Length: -";
+    }
+
+    // --- GAME FLOW ---
+
+    startBtn.addEventListener("click", () => {
+      resetUI();
+      const mode = modeSelect.value; // "code" or "words"
+      const difficulty = difficultySelect.value; // "easy" | "intermediate" | "hard"
+
+      const length = codeLengths[difficulty];
+      const showTime = times[difficulty];
+
+      let generated;
+      if (mode === "code") {
+        generated = generateCode(length);
+      } else {
+        generated = generateWord(difficulty);
+      }
+
+      currentAnswer = generated;
+      displayArea.textContent = generated;
+      lengthLabel.textContent = "Length: " + generated.length;
+      showingPhase = true;
+
+      // Disable input during show phase
+      answerInput.disabled = true;
+      submitBtn.disabled = true;
+      resultText.textContent = "Memorise it!";
+
+      setTimer(showTime, () => {
+        // Hide and move to input phase
+        displayArea.textContent = "";
+        showingPhase = false;
+        answerInput.disabled = false;
+        submitBtn.disabled = false;
+        answerInput.focus();
+        resultText.textContent = "Type what you remember!";
+        timerLabel.textContent = "Time: -";
+      });
+    });
+
+    submitBtn.addEventListener("click", () => {
+      if (showingPhase || !currentAnswer) return;
+
+      const userInput = answerInput.value.trim();
+      if (!userInput) return;
+
+      if (userInput.toLowerCase() === currentAnswer.toLowerCase()) {
+        resultText.textContent = "Correct!";
+        resultText.className = "result correct";
+        score += 100;
+      } else {
+        resultText.textContent = `Wrong! Answer was: ${currentAnswer}`;
+        resultText.className = "result wrong";
+      }
+
+      scoreText.textContent = "Score: " + score;
+      answerInput.disabled = true;
+      submitBtn.disabled = true;
+    });
+
+    answerInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        submitBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
