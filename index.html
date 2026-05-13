@@ -1,314 +1,16 @@
-
-
-
-make this code Look Accually Better
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Remembrance Test</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111827;
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .game {
-      background: #1f2937;
-      padding: 20px 24px;
-      border-radius: 10px;
-      width: 420px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-    h1 {
-      margin-top: 0;
-      text-align: center;
-      font-size: 22px;
-    }
-    .row {
-      margin-bottom: 10px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: space-between;
-    }
-    select, button, input {
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: none;
-      font-size: 14px;
-    }
-    select, input {
-      width: 100%;
-      box-sizing: border-box;
-    }
-    button {
-      background: #2563eb;
-      color: white;
-      cursor: pointer;
-    }
-    button:disabled {
-      background: #4b5563;
-      cursor: default;
-    }
-    .label {
-      font-size: 13px;
-      color: #9ca3af;
-      margin-bottom: 2px;
-    }
-    .display-box {
-      margin: 12px 0;
-      padding: 10px;
-      border-radius: 6px;
-      background: #111827;
-      text-align: center;
-      font-size: 20px;
-      letter-spacing: 2px;
-      min-height: 32px;
-    }
-    .info {
-      font-size: 13px;
-      color: #9ca3af;
-      display: flex;
-      justify-content: space-between;
-    }
-    .result {
-      margin-top: 8px;
-      font-size: 14px;
-      min-height: 18px;
-    }
-    .correct { color: #22c55e; }
-    .wrong { color: #f97316; }
-    .score {
-      margin-top: 6px;
-      font-size: 14px;
-      text-align: right;
-      color: #e5e7eb;
-    }
-  </style>
-</head>
-<body>
-  <div class="game">
-    <h1>Remembrance Test</h1>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-    <div class="row">
-      <div style="flex:1;">
-        <div class="label">Mode</div>
-        <select id="modeSelect">
-          <option value="code">Code</option>
-          <option value="words">Words</option>
-        </select>
-      </div>
-      <div style="flex:1;">
-        <div class="label">Difficulty</div>
-        <select id="difficultySelect">
-          <option value="easy">Easy</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="hard">Hard</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row">
-      <button id="startBtn" style="flex:1;">Start Round</button>
-    </div>
-
-    <div class="display-box" id="displayArea"></div>
-
-    <div class="info">
-      <span id="timerLabel">Time: -</span>
-      <span id="lengthLabel">Length: -</span>
-    </div>
-
-    <div class="row">
-      <div style="flex:1;">
-        <div class="label">Your Input</div>
-        <input id="answerInput" type="text" autocomplete="off" disabled />
-      </div>
-      <button id="submitBtn" disabled>Submit</button>
-    </div>
-
-    <div class="result" id="resultText"></div>
-    <div class="score" id="scoreText">Score: 0</div>
-  </div>
-
-  <script>
-    // --- CONFIG ---
-
-    const codeLengths = {
-      easy: 5,
-      intermediate: 7,
-      hard: 10
-    };
-
-    const times = {
-      easy: 5,
-      intermediate: 3,
-      hard: 1
-    };
-
-    const wordPools = {
-      easy: [
-        "flame", "crisp", "vivid", "shard", "lunar", "prism", "ember"
-      ], // 5 letters
-      intermediate: [
-        "crystal", "shimmer", "radiant", "horizon", "spectra", "velvety", "amplify"
-      ], // 7 letters
-      hard: [
-        "luminosity", "reflection", "stargazers", "afterglow", "resonating", "spellbound"
-      ] // 10 letters (or close; you can tweak)
-    };
-
-    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-    // --- STATE ---
-
-    let currentAnswer = "";
-    let currentTimer = null;
-    let timeLeft = 0;
-    let score = 0;
-    let showingPhase = false; // true while code/word is visible
-
-    // --- ELEMENTS ---
-
-    const modeSelect = document.getElementById("modeSelect");
-    const difficultySelect = document.getElementById("difficultySelect");
-    const startBtn = document.getElementById("startBtn");
-    const displayArea = document.getElementById("displayArea");
-    const timerLabel = document.getElementById("timerLabel");
-    const lengthLabel = document.getElementById("lengthLabel");
-    const answerInput = document.getElementById("answerInput");
-    const submitBtn = document.getElementById("submitBtn");
-    const resultText = document.getElementById("resultText");
-    const scoreText = document.getElementById("scoreText");
-
-    // --- HELPERS ---
-
-    function randomFromArray(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function generateCode(length) {
-      let out = "";
-      for (let i = 0; i < length; i++) {
-        out += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return out;
-    }
-
-    function generateWord(difficulty) {
-      const pool = wordPools[difficulty];
-      return randomFromArray(pool);
-    }
-
-    function setTimer(seconds, onEnd) {
-      clearInterval(currentTimer);
-      timeLeft = seconds;
-      timerLabel.textContent = "Time: " + timeLeft.toFixed(1) + "s";
-
-      currentTimer = setInterval(() => {
-        timeLeft -= 0.1;
-        if (timeLeft <= 0) {
-          clearInterval(currentTimer);
-          timerLabel.textContent = "Time: 0.0s";
-          onEnd();
-        } else {
-          timerLabel.textContent = "Time: " + timeLeft.toFixed(1) + "s";
-        }
-      }, 100);
-    }
-
-    function resetUI() {
-      displayArea.textContent = "";
-      answerInput.value = "";
-      answerInput.disabled = true;
-      submitBtn.disabled = true;
-      resultText.textContent = "";
-      timerLabel.textContent = "Time: -";
-      lengthLabel.textContent = "Length: -";
-    }
-
-    // --- GAME FLOW ---
-
-    startBtn.addEventListener("click", () => {
-      resetUI();
-      const mode = modeSelect.value; // "code" or "words"
-      const difficulty = difficultySelect.value; // "easy" | "intermediate" | "hard"
-
-      const length = codeLengths[difficulty];
-      const showTime = times[difficulty];
-
-      let generated;
-      if (mode === "code") {
-        generated = generateCode(length);
-      } else {
-        generated = generateWord(difficulty);
-      }
-
-      currentAnswer = generated;
-      displayArea.textContent = generated;
-      lengthLabel.textContent = "Length: " + generated.length;
-      showingPhase = true;
-
-      // Disable input during show phase
-      answerInput.disabled = true;
-      submitBtn.disabled = true;
-      resultText.textContent = "Memorise it!";
-
-      setTimer(showTime, () => {
-        // Hide and move to input phase
-        displayArea.textContent = "";
-        showingPhase = false;
-        answerInput.disabled = false;
-        submitBtn.disabled = false;
-        answerInput.focus();
-        resultText.textContent = "Type what you remember!";
-        timerLabel.textContent = "Time: -";
-      });
-    });
-
-    submitBtn.addEventListener("click", () => {
-      if (showingPhase || !currentAnswer) return;
-
-      const userInput = answerInput.value.trim();
-      if (!userInput) return;
-
-      if (userInput.toLowerCase() === currentAnswer.toLowerCase()) {
-        resultText.textContent = "Correct!";
-        resultText.className = "result correct";
-        score += 100;
-      } else {
-        resultText.textContent = Wrong! Answer was: ${currentAnswer};
-        resultText.className = "result wrong";
-      }
-
-      scoreText.textContent = "Score: " + score;
-      answerInput.disabled = true;
-      submitBtn.disabled = true;
-    });
-
-    answerInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        submitBtn.click();
-      }
-    });
-  </script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Memory Challenge</title>
 
   <style>
+
     * {
       margin: 0;
       padding: 0;
@@ -316,13 +18,16 @@ make this code Look Accually Better
     }
 
     :root {
-      --bg: #070b14;
-      --card: rgba(17, 24, 39, 0.75);
-      --card-border: rgba(255,255,255,0.08);
 
-      --primary: #7c3aed;
+      --bg-1: #020617;
+      --bg-2: #0f172a;
+
+      --card: rgba(15, 23, 42, 0.82);
+
+      --primary: #8b5cf6;
       --primary-2: #9333ea;
-      --accent: #22d3ee;
+
+      --cyan: #22d3ee;
 
       --text: #f8fafc;
       --muted: #94a3b8;
@@ -330,157 +35,296 @@ make this code Look Accually Better
       --success: #22c55e;
       --danger: #fb7185;
 
-      --shadow:
-        0 10px 30px rgba(0,0,0,0.4),
-        0 0 80px rgba(124, 58, 237, 0.15);
     }
 
     body {
+
       min-height: 100vh;
+
       display: flex;
       justify-content: center;
       align-items: center;
+
+      padding: 30px;
+
       overflow: hidden;
 
-      font-family: Inter, system-ui, sans-serif;
+      font-family:
+        Inter,
+        system-ui,
+        Arial,
+        sans-serif;
+
       background:
-        radial-gradient(circle at top left, #1e1b4b 0%, transparent 35%),
-        radial-gradient(circle at bottom right, #0f766e 0%, transparent 30%),
-        linear-gradient(135deg, #020617, #0f172a 50%, #111827);
+
+        radial-gradient(
+          circle at top left,
+          rgba(139, 92, 246, 0.25),
+          transparent 30%
+        ),
+
+        radial-gradient(
+          circle at bottom right,
+          rgba(34, 211, 238, 0.18),
+          transparent 30%
+        ),
+
+        linear-gradient(
+          135deg,
+          var(--bg-1),
+          var(--bg-2)
+        );
 
       color: var(--text);
-      padding: 20px;
-    }
-
-    .background-glow {
-      position: absolute;
-      width: 700px;
-      height: 700px;
-      background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%);
-      filter: blur(40px);
-      animation: pulse 8s infinite ease-in-out;
-      z-index: 0;
-    }
-
-    @keyframes pulse {
-      0%,100% {
-        transform: scale(1);
-        opacity: 0.7;
-      }
-      50% {
-        transform: scale(1.15);
-        opacity: 1;
-      }
     }
 
     .game {
-      position: relative;
-      z-index: 2;
 
-      width: 460px;
-      backdrop-filter: blur(18px);
+      width: 100%;
+      max-width: 470px;
+
+      position: relative;
+
+      padding: 32px;
+
+      border-radius: 32px;
+
+      backdrop-filter: blur(20px);
 
       background: var(--card);
-      border: 1px solid var(--card-border);
 
-      border-radius: 28px;
-      padding: 30px;
+      border:
+        1px solid rgba(255,255,255,0.08);
 
-      box-shadow: var(--shadow);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.45),
+        0 0 80px rgba(139,92,246,0.15);
+
+      overflow: hidden;
+    }
+
+    .game::before {
+
+      content: "";
+
+      position: absolute;
+
+      width: 250px;
+      height: 250px;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(139,92,246,0.22),
+          transparent 70%
+        );
+
+      top: -120px;
+      right: -120px;
+
+      pointer-events: none;
     }
 
     .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 26px;
+
+      position: relative;
+
+      margin-bottom: 28px;
     }
 
-    .title-wrap h1 {
-      font-size: 2rem;
+    h1 {
+
+      font-size: 2.3rem;
       font-weight: 800;
+
+      line-height: 1.1;
+
+      margin-bottom: 10px;
+
       letter-spacing: -1px;
+    }
+
+    .subtitle {
+
+      color: var(--muted);
+
+      font-size: 0.96rem;
+
+      width: 75%;
+    }
+
+    .score-box {
+
+      position: absolute;
+
+      top: 0;
+      right: 0;
+
+      width: 95px;
+      height: 95px;
+
+      border-radius: 24px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-2)
+        );
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      box-shadow:
+        0 12px 30px rgba(139,92,246,0.35);
+
+      animation:
+        glow 4s infinite ease-in-out;
+    }
+
+    @keyframes glow {
+
+      0%, 100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.03);
+      }
+    }
+
+    .score-box span {
+
+      font-size: 0.78rem;
+      opacity: 0.9;
+
       margin-bottom: 4px;
     }
 
-    .title-wrap p {
-      color: var(--muted);
-      font-size: 0.95rem;
+    .score-box strong {
+
+      font-size: 1.5rem;
+      font-weight: 800;
     }
 
-    .score-badge {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      padding: 12px 18px;
-      border-radius: 18px;
-      text-align: center;
-      min-width: 90px;
+    .row {
 
-      box-shadow:
-        0 10px 20px rgba(124,58,237,0.3),
-        inset 0 1px 0 rgba(255,255,255,0.2);
-    }
-
-    .score-badge span {
-      display: block;
-      font-size: 0.75rem;
-      opacity: 0.9;
-      margin-bottom: 3px;
-    }
-
-    .score-badge strong {
-      font-size: 1.2rem;
-    }
-
-    .settings {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 16px;
-      margin-bottom: 20px;
+
+      margin-bottom: 18px;
     }
 
     .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      flex: 1;
     }
 
-    .field label {
+    .label {
+
+      display: block;
+
+      margin-bottom: 8px;
+
       color: var(--muted);
-      font-size: 0.85rem;
+
+      font-size: 0.9rem;
       font-weight: 600;
     }
 
     select,
     input {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+
+      width: 100%;
+
+      padding: 15px 16px;
+
+      border-radius: 18px;
+
+      border:
+        1px solid rgba(255,255,255,0.08);
+
+      background:
+        rgba(255,255,255,0.05);
 
       color: white;
-      border-radius: 14px;
 
-      padding: 14px;
-      font-size: 0.95rem;
+      font-size: 1rem;
 
       outline: none;
-      transition: 0.25s ease;
+
+      transition: 0.25s;
     }
 
     select:focus,
     input:focus {
-      border-color: rgba(34,211,238,0.6);
-      box-shadow: 0 0 0 4px rgba(34,211,238,0.12);
+
+      border-color:
+        rgba(139,92,246,0.6);
+
+      box-shadow:
+        0 0 0 4px rgba(139,92,246,0.12);
+    }
+
+    select option {
+      background: #111827;
+    }
+
+    button {
+
+      border: none;
+
+      cursor: pointer;
+
+      transition: 0.25s;
+
+      font-weight: 700;
+    }
+
+    .start-btn {
+
+      width: 100%;
+
+      padding: 16px;
+
+      border-radius: 20px;
+
+      margin-bottom: 26px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-2)
+        );
+
+      color: white;
+
+      font-size: 1rem;
+
+      box-shadow:
+        0 12px 30px rgba(139,92,246,0.35);
+    }
+
+    .start-btn:hover {
+
+      transform: translateY(-2px);
+
+      filter: brightness(1.05);
     }
 
     .display-box {
-      height: 110px;
+
+      height: 125px;
 
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
 
-      margin: 20px 0;
+      margin-bottom: 22px;
 
-      border-radius: 24px;
+      border-radius: 30px;
 
       background:
         linear-gradient(
@@ -489,18 +333,23 @@ make this code Look Accually Better
           rgba(255,255,255,0.03)
         );
 
-      border: 1px solid rgba(255,255,255,0.08);
+      border:
+        1px solid rgba(255,255,255,0.08);
 
-      font-size: 2rem;
+      font-size: 2.3rem;
       font-weight: 800;
-      letter-spacing: 4px;
+
+      letter-spacing: 5px;
 
       position: relative;
+
       overflow: hidden;
     }
 
     .display-box::before {
+
       content: "";
+
       position: absolute;
       inset: 0;
 
@@ -513,226 +362,287 @@ make this code Look Accually Better
         );
 
       transform: translateX(-100%);
-      animation: shine 4s infinite;
+
+      animation:
+        shine 5s infinite;
     }
 
     @keyframes shine {
+
       100% {
         transform: translateX(200%);
       }
     }
 
-    .stats {
+    .info {
+
       display: flex;
       justify-content: space-between;
-      margin-bottom: 18px;
+
+      margin-bottom: 20px;
+
       color: var(--muted);
-      font-size: 0.92rem;
+
+      font-size: 0.95rem;
     }
 
     .input-row {
+
       display: flex;
       gap: 12px;
-      margin-top: 10px;
     }
 
-    .input-row input {
-      flex: 1;
-    }
+    .submit-btn {
 
-    button {
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
-      transition: 0.25s ease;
-    }
+      padding: 0 24px;
 
-    .primary-btn {
-      width: 100%;
-      padding: 15px;
-      border-radius: 16px;
-      margin-top: 6px;
+      border-radius: 18px;
 
       background:
         linear-gradient(
           135deg,
-          var(--primary),
-          var(--primary-2)
+          #06b6d4,
+          #0891b2
         );
 
-      color: white;
-      font-size: 1rem;
-
-      box-shadow:
-        0 10px 25px rgba(124,58,237,0.35);
-    }
-
-    .primary-btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.06);
-    }
-
-    .submit-btn {
-      padding: 0 22px;
-      border-radius: 14px;
-
-      background: linear-gradient(135deg, #06b6d4, #0891b2);
       color: white;
     }
 
     .submit-btn:hover {
+
       transform: translateY(-2px);
     }
 
     button:disabled {
+
       opacity: 0.45;
+
       cursor: not-allowed;
+
       transform: none !important;
     }
 
     .result {
-      margin-top: 18px;
+
+      margin-top: 22px;
+
+      text-align: center;
+
       min-height: 26px;
 
-      font-weight: 700;
-      text-align: center;
       font-size: 1rem;
+      font-weight: 700;
     }
 
     .correct {
+
       color: var(--success);
-      text-shadow: 0 0 12px rgba(34,197,94,0.4);
+
+      text-shadow:
+        0 0 15px rgba(34,197,94,0.45);
     }
 
     .wrong {
+
       color: var(--danger);
-      text-shadow: 0 0 12px rgba(251,113,133,0.35);
+
+      text-shadow:
+        0 0 15px rgba(251,113,133,0.4);
     }
 
-    .hint {
-      margin-top: 20px;
+    .footer {
+
+      margin-top: 28px;
+
       text-align: center;
+
       color: var(--muted);
+
       font-size: 0.82rem;
     }
 
-    @media (max-width: 520px) {
-      .game {
-        width: 100%;
-        padding: 22px;
+    @media (max-width: 560px) {
+
+      body {
+        padding: 16px;
       }
 
-      .settings {
-        grid-template-columns: 1fr;
+      .game {
+        padding: 24px;
+      }
+
+      .row {
+        flex-direction: column;
+      }
+
+      .subtitle {
+        width: 100%;
+      }
+
+      .score-box {
+
+        position: static;
+
+        margin-top: 18px;
       }
 
       .display-box {
-        font-size: 1.5rem;
-      }
-
-      .top {
-        flex-direction: column;
-        gap: 18px;
-        align-items: flex-start;
+        font-size: 1.7rem;
       }
     }
+
   </style>
 </head>
 
 <body>
 
-  <div class="background-glow"></div>
-
   <div class="game">
 
     <div class="top">
-      <div class="title-wrap">
-        <h1>🧠 Memory Challenge</h1>
-        <p>Test your short-term memory speed.</p>
+
+      <h1>🧠 Memory Challenge</h1>
+
+      <p class="subtitle">
+        Test your short-term memory speed.
+      </p>
+
+      <div class="score-box">
+
+        <span>SCORE</span>
+
+        <strong id="scoreText">
+          0
+        </strong>
+
       </div>
 
-      <div class="score-badge">
-        <span>SCORE</span>
-        <strong id="scoreText">0</strong>
-      </div>
     </div>
 
-    <div class="settings">
+    <div class="row">
+
       <div class="field">
-        <label>Mode</label>
+
+        <label class="label">
+          Mode
+        </label>
 
         <select id="modeSelect">
-          <option value="code">Random Code</option>
-          <option value="words">Words</option>
+
+          <option value="code">
+            Random Code
+          </option>
+
+          <option value="words">
+            Words
+          </option>
+
         </select>
+
       </div>
 
       <div class="field">
-        <label>Difficulty</label>
+
+        <label class="label">
+          Difficulty
+        </label>
 
         <select id="difficultySelect">
-          <option value="easy">Easy</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="hard">Hard</option>
+
+          <option value="easy">
+            Easy
+          </option>
+
+          <option value="intermediate">
+            Intermediate
+          </option>
+
+          <option value="hard">
+            Hard
+          </option>
+
         </select>
+
       </div>
+
     </div>
 
-    <button class="primary-btn" id="startBtn">
+    <button
+      id="startBtn"
+      class="start-btn"
+    >
       Start Challenge
     </button>
 
-    <div class="display-box" id="displayArea">
+    <div
+      class="display-box"
+      id="displayArea"
+    >
       Ready?
     </div>
 
-    <div class="stats">
-      <span id="timerLabel">⏱ Time: -</span>
-      <span id="lengthLabel">🔢 Length: -</span>
+    <div class="info">
+
+      <span id="timerLabel">
+        ⏱ Time: -
+      </span>
+
+      <span id="lengthLabel">
+        🔢 Length: -
+      </span>
+
     </div>
 
     <div class="input-row">
+
       <input
         id="answerInput"
         type="text"
-        placeholder="Type what you remember..."
         autocomplete="off"
+        placeholder="Type what you remember..."
         disabled
       />
 
       <button
-        class="submit-btn"
         id="submitBtn"
+        class="submit-btn"
         disabled
       >
         Submit
       </button>
+
     </div>
 
-    <div class="result" id="resultText"></div>
+    <div
+      class="result"
+      id="resultText"
+    ></div>
 
-    <div class="hint">
+    <div class="footer">
       Press ENTER to submit faster ⚡
     </div>
 
   </div>
 
   <script>
+
     // ---------------- CONFIG ----------------
 
     const codeLengths = {
+
       easy: 5,
       intermediate: 7,
       hard: 10
     };
 
     const times = {
+
       easy: 5,
       intermediate: 3,
       hard: 1.5
     };
 
     const wordPools = {
+
       easy: [
         "flame",
         "crisp",
@@ -769,9 +679,13 @@ make this code Look Accually Better
     // ---------------- STATE ----------------
 
     let currentAnswer = "";
+
     let currentTimer = null;
+
     let timeLeft = 0;
+
     let score = 0;
+
     let showingPhase = false;
 
     // ---------------- ELEMENTS ----------------
@@ -809,15 +723,18 @@ make this code Look Accually Better
     // ---------------- HELPERS ----------------
 
     function randomFromArray(arr) {
+
       return arr[
         Math.floor(Math.random() * arr.length)
       ];
     }
 
     function generateCode(length) {
+
       let output = "";
 
       for (let i = 0; i < length; i++) {
+
         output += chars[
           Math.floor(Math.random() * chars.length)
         ];
@@ -827,12 +744,20 @@ make this code Look Accually Better
     }
 
     function generateWord(difficulty) {
+
       return randomFromArray(
         wordPools[difficulty]
       );
     }
 
+    function updateTimer() {
+
+      timerLabel.textContent =
+        `⏱ Time: ${timeLeft.toFixed(1)}s`;
+    }
+
     function setTimer(seconds, onEnd) {
+
       clearInterval(currentTimer);
 
       timeLeft = seconds;
@@ -840,9 +765,11 @@ make this code Look Accually Better
       updateTimer();
 
       currentTimer = setInterval(() => {
+
         timeLeft -= 0.1;
 
         if (timeLeft <= 0) {
+
           clearInterval(currentTimer);
 
           timerLabel.textContent =
@@ -858,19 +785,16 @@ make this code Look Accually Better
       }, 100);
     }
 
-    function updateTimer() {
-      timerLabel.textContent =
-        `⏱ Time: ${timeLeft.toFixed(1)}s`;
-    }
-
     function resetUI() {
 
       answerInput.value = "";
 
       answerInput.disabled = true;
+
       submitBtn.disabled = true;
 
       resultText.textContent = "";
+
       resultText.className = "result";
 
       timerLabel.textContent =
@@ -880,121 +804,145 @@ make this code Look Accually Better
         "🔢 Length: -";
     }
 
-    function flashResult(type) {
-      resultText.classList.remove(
-        "correct",
-        "wrong"
-      );
+    function setResult(message, type) {
 
-      void resultText.offsetWidth;
+      resultText.textContent = message;
 
-      resultText.classList.add(type);
+      resultText.className =
+        `result ${type}`;
     }
 
-    // ---------------- GAME ----------------
+    // ---------------- GAME FLOW ----------------
 
-    startBtn.addEventListener("click", () => {
+    startBtn.addEventListener(
+      "click",
+      () => {
 
-      resetUI();
+        resetUI();
 
-      const mode = modeSelect.value;
-      const difficulty =
-        difficultySelect.value;
+        const mode =
+          modeSelect.value;
 
-      const length =
-        codeLengths[difficulty];
+        const difficulty =
+          difficultySelect.value;
 
-      const showTime =
-        times[difficulty];
+        const length =
+          codeLengths[difficulty];
 
-      let generated;
+        const showTime =
+          times[difficulty];
 
-      if (mode === "code") {
-        generated = generateCode(length);
-      } else {
-        generated = generateWord(difficulty);
+        let generated = "";
+
+        if (mode === "code") {
+
+          generated =
+            generateCode(length);
+
+        } else {
+
+          generated =
+            generateWord(difficulty);
+        }
+
+        currentAnswer = generated;
+
+        showingPhase = true;
+
+        displayArea.textContent =
+          generated;
+
+        lengthLabel.textContent =
+          `🔢 Length: ${generated.length}`;
+
+        resultText.textContent =
+          "Memorise it carefully 👀";
+
+        answerInput.disabled = true;
+
+        submitBtn.disabled = true;
+
+        setTimer(showTime, () => {
+
+          displayArea.textContent =
+            "•••••";
+
+          showingPhase = false;
+
+          answerInput.disabled = false;
+
+          submitBtn.disabled = false;
+
+          answerInput.focus();
+
+          timerLabel.textContent =
+            "⏱ Time: Done";
+
+          resultText.textContent =
+            "Type what you remember ✍️";
+        });
       }
+    );
 
-      currentAnswer = generated;
+    // ---------------- SUBMIT ----------------
 
-      displayArea.textContent = generated;
+    submitBtn.addEventListener(
+      "click",
+      () => {
 
-      lengthLabel.textContent =
-        `🔢 Length: ${generated.length}`;
+        if (
+          showingPhase ||
+          !currentAnswer
+        ) return;
 
-      showingPhase = true;
+        const userInput =
+          answerInput.value.trim();
 
-      resultText.textContent =
-        "Memorise it carefully 👀";
+        if (!userInput) return;
 
-      setTimer(showTime, () => {
+        if (
+          userInput.toLowerCase() ===
+          currentAnswer.toLowerCase()
+        ) {
 
-        displayArea.textContent = "•••••";
+          score += 100;
 
-        showingPhase = false;
+          scoreText.textContent =
+            score;
 
-        answerInput.disabled = false;
-        submitBtn.disabled = false;
+          setResult(
+            "✔️ Correct! +100 Points",
+            "correct"
+          );
 
-        answerInput.focus();
+        } else {
 
-        resultText.textContent =
-          "Now type what you remember ✍️";
+          setResult(
+            `❌ Wrong! Answer: ${currentAnswer}`,
+            "wrong"
+          );
+        }
 
-        timerLabel.textContent =
-          "⏱ Time: Done";
-      });
-    });
+        answerInput.disabled = true;
 
-    submitBtn.addEventListener("click", () => {
-
-      if (
-        showingPhase ||
-        !currentAnswer
-      ) return;
-
-      const userInput =
-        answerInput.value.trim();
-
-      if (!userInput) return;
-
-      if (
-        userInput.toLowerCase() ===
-        currentAnswer.toLowerCase()
-      ) {
-
-        score += 100;
-
-        resultText.textContent =
-          "✔️ Correct! +100 points";
-
-        flashResult("correct");
-
-      } else {
-
-        resultText.textContent =
-          `❌ Wrong! Answer: ${currentAnswer}`;
-
-        flashResult("wrong");
+        submitBtn.disabled = true;
       }
+    );
 
-      scoreText.textContent = score;
-
-      answerInput.disabled = true;
-      submitBtn.disabled = true;
-    });
+    // ---------------- ENTER KEY ----------------
 
     answerInput.addEventListener(
       "keydown",
       (e) => {
 
         if (e.key === "Enter") {
+
           submitBtn.click();
         }
       }
     );
+
   </script>
 
 </body>
 </html>
-
