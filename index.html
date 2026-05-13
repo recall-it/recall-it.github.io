@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
@@ -34,7 +35,6 @@
 
       --success: #22c55e;
       --danger: #fb7185;
-
     }
 
     body {
@@ -45,9 +45,9 @@
       justify-content: center;
       align-items: center;
 
-      padding: 30px;
+      padding: 24px;
 
-      overflow: hidden;
+      overflow-x: hidden;
 
       font-family:
         Inter,
@@ -78,10 +78,14 @@
       color: var(--text);
     }
 
-    .game {
+    .hidden {
+      display: none !important;
+    }
+
+    .screen {
 
       width: 100%;
-      max-width: 470px;
+      max-width: 480px;
 
       position: relative;
 
@@ -103,14 +107,16 @@
       overflow: hidden;
     }
 
-    .game::before {
+    .screen::before {
 
       content: "";
 
       position: absolute;
 
-      width: 250px;
-      height: 250px;
+      width: 260px;
+      height: 260px;
+
+      border-radius: 50%;
 
       background:
         radial-gradient(
@@ -121,36 +127,151 @@
 
       top: -120px;
       right: -120px;
-
-      pointer-events: none;
-    }
-
-    .top {
-
-      position: relative;
-
-      margin-bottom: 28px;
     }
 
     h1 {
 
-      font-size: 2.3rem;
+      font-size: 2.5rem;
       font-weight: 800;
-
-      line-height: 1.1;
 
       margin-bottom: 10px;
 
       letter-spacing: -1px;
+
+      line-height: 1.1;
     }
 
     .subtitle {
 
       color: var(--muted);
 
-      font-size: 0.96rem;
+      margin-bottom: 26px;
 
-      width: 75%;
+      font-size: 0.95rem;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .label {
+
+      display: block;
+
+      margin-bottom: 8px;
+
+      color: var(--muted);
+
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    input,
+    select {
+
+      width: 100%;
+
+      padding: 15px 16px;
+
+      border-radius: 18px;
+
+      border:
+        1px solid rgba(255,255,255,0.08);
+
+      background:
+        rgba(255,255,255,0.05);
+
+      color: white;
+
+      font-size: 1rem;
+
+      outline: none;
+
+      transition: 0.25s;
+    }
+
+    input:focus,
+    select:focus {
+
+      border-color:
+        rgba(139,92,246,0.6);
+
+      box-shadow:
+        0 0 0 4px rgba(139,92,246,0.12);
+    }
+
+    select option {
+      background: #111827;
+    }
+
+    button {
+
+      border: none;
+
+      cursor: pointer;
+
+      transition: 0.25s ease;
+
+      font-weight: 700;
+    }
+
+    .main-btn {
+
+      width: 100%;
+
+      padding: 16px;
+
+      border-radius: 20px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-2)
+        );
+
+      color: white;
+
+      font-size: 1rem;
+
+      box-shadow:
+        0 12px 30px rgba(139,92,246,0.35);
+    }
+
+    .main-btn:hover {
+
+      transform: translateY(-2px);
+
+      filter: brightness(1.05);
+    }
+
+    .switch {
+
+      margin-top: 18px;
+
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 0.9rem;
+    }
+
+    .switch a {
+
+      color: white;
+
+      text-decoration: none;
+
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .top {
+
+      position: relative;
+
+      margin-bottom: 26px;
     }
 
     .score-box {
@@ -179,25 +300,12 @@
 
       box-shadow:
         0 12px 30px rgba(139,92,246,0.35);
-
-      animation:
-        glow 4s infinite ease-in-out;
-    }
-
-    @keyframes glow {
-
-      0%, 100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.03);
-      }
     }
 
     .score-box span {
 
       font-size: 0.78rem;
+
       opacity: 0.9;
 
       margin-bottom: 4px;
@@ -206,112 +314,56 @@
     .score-box strong {
 
       font-size: 1.5rem;
+
       font-weight: 800;
+    }
+
+    .username-tag {
+
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      margin-top: 12px;
+
+      padding: 10px 14px;
+
+      border-radius: 14px;
+
+      background:
+        rgba(255,255,255,0.05);
+
+      color: var(--muted);
+
+      font-size: 0.92rem;
+    }
+
+    .logout-btn {
+
+      margin-top: 10px;
+
+      padding: 10px 14px;
+
+      border-radius: 14px;
+
+      background:
+        rgba(255,255,255,0.08);
+
+      color: white;
     }
 
     .row {
 
       display: flex;
+
       gap: 16px;
 
       margin-bottom: 18px;
     }
 
-    .field {
+    .row .field {
       flex: 1;
-    }
-
-    .label {
-
-      display: block;
-
-      margin-bottom: 8px;
-
-      color: var(--muted);
-
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    select,
-    input {
-
-      width: 100%;
-
-      padding: 15px 16px;
-
-      border-radius: 18px;
-
-      border:
-        1px solid rgba(255,255,255,0.08);
-
-      background:
-        rgba(255,255,255,0.05);
-
-      color: white;
-
-      font-size: 1rem;
-
-      outline: none;
-
-      transition: 0.25s;
-    }
-
-    select:focus,
-    input:focus {
-
-      border-color:
-        rgba(139,92,246,0.6);
-
-      box-shadow:
-        0 0 0 4px rgba(139,92,246,0.12);
-    }
-
-    select option {
-      background: #111827;
-    }
-
-    button {
-
-      border: none;
-
-      cursor: pointer;
-
-      transition: 0.25s;
-
-      font-weight: 700;
-    }
-
-    .start-btn {
-
-      width: 100%;
-
-      padding: 16px;
-
-      border-radius: 20px;
-
-      margin-bottom: 26px;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--primary),
-          var(--primary-2)
-        );
-
-      color: white;
-
-      font-size: 1rem;
-
-      box-shadow:
-        0 12px 30px rgba(139,92,246,0.35);
-    }
-
-    .start-btn:hover {
-
-      transform: translateY(-2px);
-
-      filter: brightness(1.05);
+      margin-bottom: 0;
     }
 
     .display-box {
@@ -336,42 +388,10 @@
       border:
         1px solid rgba(255,255,255,0.08);
 
-      font-size: 2.3rem;
+      font-size: 2.2rem;
       font-weight: 800;
 
-      letter-spacing: 5px;
-
-      position: relative;
-
-      overflow: hidden;
-    }
-
-    .display-box::before {
-
-      content: "";
-
-      position: absolute;
-      inset: 0;
-
-      background:
-        linear-gradient(
-          120deg,
-          transparent,
-          rgba(255,255,255,0.08),
-          transparent
-        );
-
-      transform: translateX(-100%);
-
-      animation:
-        shine 5s infinite;
-    }
-
-    @keyframes shine {
-
-      100% {
-        transform: translateX(200%);
-      }
+      letter-spacing: 4px;
     }
 
     .info {
@@ -382,13 +402,12 @@
       margin-bottom: 20px;
 
       color: var(--muted);
-
-      font-size: 0.95rem;
     }
 
     .input-row {
 
       display: flex;
+
       gap: 12px;
     }
 
@@ -408,46 +427,94 @@
       color: white;
     }
 
-    .submit-btn:hover {
-
-      transform: translateY(-2px);
-    }
-
-    button:disabled {
-
-      opacity: 0.45;
-
-      cursor: not-allowed;
-
-      transform: none !important;
-    }
-
     .result {
 
-      margin-top: 22px;
+      margin-top: 20px;
+
+      min-height: 24px;
 
       text-align: center;
 
-      min-height: 26px;
-
-      font-size: 1rem;
       font-weight: 700;
     }
 
     .correct {
-
       color: var(--success);
-
-      text-shadow:
-        0 0 15px rgba(34,197,94,0.45);
     }
 
     .wrong {
-
       color: var(--danger);
+    }
 
-      text-shadow:
-        0 0 15px rgba(251,113,133,0.4);
+    .leaderboard {
+
+      margin-top: 30px;
+    }
+
+    .leaderboard h2 {
+
+      margin-bottom: 14px;
+
+      font-size: 1.1rem;
+    }
+
+    .leaderboard-item {
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 14px 16px;
+
+      margin-bottom: 10px;
+
+      border-radius: 16px;
+
+      background:
+        rgba(255,255,255,0.05);
+
+      border:
+        1px solid rgba(255,255,255,0.05);
+    }
+
+    .leaderboard-left {
+
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .rank {
+
+      width: 32px;
+      height: 32px;
+
+      border-radius: 10px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-2)
+        );
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-weight: 800;
+    }
+
+    .leaderboard-name {
+
+      font-weight: 700;
+    }
+
+    .leaderboard-score {
+
+      color: var(--cyan);
+
+      font-weight: 700;
     }
 
     .footer {
@@ -463,20 +530,12 @@
 
     @media (max-width: 560px) {
 
-      body {
-        padding: 16px;
-      }
-
-      .game {
+      .screen {
         padding: 24px;
       }
 
       .row {
         flex-direction: column;
-      }
-
-      .subtitle {
-        width: 100%;
       }
 
       .score-box {
@@ -487,7 +546,7 @@
       }
 
       .display-box {
-        font-size: 1.7rem;
+        font-size: 1.6rem;
       }
     }
 
@@ -496,15 +555,145 @@
 
 <body>
 
-  <div class="game">
+  <!-- LOGIN SCREEN -->
+
+  <div
+    class="screen"
+    id="loginScreen"
+  >
+
+    <h1>🧠 ReCall It!</h1>
+
+    <p class="subtitle">
+      Create an account to save your scores
+      and compete on the leaderboard.
+    </p>
+
+    <div class="field">
+
+      <label class="label">
+        Username
+      </label>
+
+      <input
+        type="text"
+        id="registerUsername"
+        placeholder="Choose a username"
+      />
+
+    </div>
+
+    <div class="field">
+
+      <label class="label">
+        Email
+      </label>
+
+      <input
+        type="email"
+        id="registerEmail"
+        placeholder="Enter your email"
+      />
+
+    </div>
+
+    <div class="field">
+
+      <label class="label">
+        Password
+      </label>
+
+      <input
+        type="password"
+        id="registerPassword"
+        placeholder="Create a password"
+      />
+
+    </div>
+
+    <button
+      class="main-btn"
+      id="registerBtn"
+    >
+      Create Account
+    </button>
+
+    <div class="switch">
+      Already have an account?
+      <a id="showLogin">
+        Login
+      </a>
+    </div>
+
+  </div>
+
+  <!-- LOGIN -->
+
+  <div
+    class="screen hidden"
+    id="signInScreen"
+  >
+
+    <h1>🔐 Welcome Back</h1>
+
+    <p class="subtitle">
+      Login to continue your memory challenge.
+    </p>
+
+    <div class="field">
+
+      <label class="label">
+        Username
+      </label>
+
+      <input
+        type="text"
+        id="loginUsername"
+        placeholder="Enter username"
+      />
+
+    </div>
+
+    <div class="field">
+
+      <label class="label">
+        Password
+      </label>
+
+      <input
+        type="password"
+        id="loginPassword"
+        placeholder="Enter password"
+      />
+
+    </div>
+
+    <button
+      class="main-btn"
+      id="loginBtn"
+    >
+      Login
+    </button>
+
+    <div class="switch">
+      Need an account?
+      <a id="showRegister">
+        Register
+      </a>
+    </div>
+
+  </div>
+
+  <!-- GAME -->
+
+  <div
+    class="screen hidden"
+    id="gameScreen"
+  >
 
     <div class="top">
 
       <h1>🧠 ReCall It!</h1>
-
-      <p class="subtitle">
-        Test your short-term memory speed.
-      </p>
 
       <div class="score-box">
 
@@ -515,6 +704,20 @@
         </strong>
 
       </div>
+
+      <div class="username-tag">
+        👤
+        <span id="currentUser">
+          Guest
+        </span>
+      </div>
+
+      <button
+        class="logout-btn"
+        id="logoutBtn"
+      >
+        Logout
+      </button>
 
     </div>
 
@@ -568,7 +771,7 @@
 
     <button
       id="startBtn"
-      class="start-btn"
+      class="main-btn"
     >
       Start Challenge
     </button>
@@ -616,6 +819,16 @@
       class="result"
       id="resultText"
     ></div>
+
+    <div class="leaderboard">
+
+      <h2>
+        🏆 Leaderboard
+      </h2>
+
+      <div id="leaderboardList"></div>
+
+    </div>
 
     <div class="footer">
       Press ENTER to submit faster ⚡
@@ -679,16 +892,41 @@
     // ---------------- STATE ----------------
 
     let currentAnswer = "";
-
     let currentTimer = null;
-
     let timeLeft = 0;
-
     let score = 0;
-
     let showingPhase = false;
 
+    let currentUser = null;
+
     // ---------------- ELEMENTS ----------------
+
+    const loginScreen =
+      document.getElementById("loginScreen");
+
+    const signInScreen =
+      document.getElementById("signInScreen");
+
+    const gameScreen =
+      document.getElementById("gameScreen");
+
+    const registerBtn =
+      document.getElementById("registerBtn");
+
+    const loginBtn =
+      document.getElementById("loginBtn");
+
+    const showLogin =
+      document.getElementById("showLogin");
+
+    const showRegister =
+      document.getElementById("showRegister");
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+    const currentUserText =
+      document.getElementById("currentUser");
 
     const modeSelect =
       document.getElementById("modeSelect");
@@ -719,6 +957,178 @@
 
     const scoreText =
       document.getElementById("scoreText");
+
+    const leaderboardList =
+      document.getElementById("leaderboardList");
+
+    // ---------------- STORAGE ----------------
+
+    function getUsers() {
+
+      return JSON.parse(
+        localStorage.getItem("recall-users")
+      ) || [];
+    }
+
+    function saveUsers(users) {
+
+      localStorage.setItem(
+        "recall-users",
+        JSON.stringify(users)
+      );
+    }
+
+    // ---------------- AUTH ----------------
+
+    registerBtn.addEventListener(
+      "click",
+      () => {
+
+        const username =
+          document.getElementById(
+            "registerUsername"
+          ).value.trim();
+
+        const email =
+          document.getElementById(
+            "registerEmail"
+          ).value.trim();
+
+        const password =
+          document.getElementById(
+            "registerPassword"
+          ).value.trim();
+
+        if (
+          !username ||
+          !email ||
+          !password
+        ) {
+
+          alert(
+            "Fill in all fields."
+          );
+
+          return;
+        }
+
+        const users = getUsers();
+
+        const exists = users.find(
+          user =>
+            user.username === username
+        );
+
+        if (exists) {
+
+          alert(
+            "Username already exists."
+          );
+
+          return;
+        }
+
+        users.push({
+
+          username,
+          email,
+          password,
+          highScore: 0
+        });
+
+        saveUsers(users);
+
+        alert(
+          "Account created!"
+        );
+
+        loginScreen.classList.add("hidden");
+
+        signInScreen.classList.remove("hidden");
+      }
+    );
+
+    loginBtn.addEventListener(
+      "click",
+      () => {
+
+        const username =
+          document.getElementById(
+            "loginUsername"
+          ).value.trim();
+
+        const password =
+          document.getElementById(
+            "loginPassword"
+          ).value.trim();
+
+        const users = getUsers();
+
+        const user = users.find(
+          u =>
+            u.username === username &&
+            u.password === password
+        );
+
+        if (!user) {
+
+          alert(
+            "Invalid login."
+          );
+
+          return;
+        }
+
+        currentUser = user;
+
+        currentUserText.textContent =
+          user.username;
+
+        score =
+          user.highScore || 0;
+
+        scoreText.textContent =
+          score;
+
+        signInScreen.classList.add("hidden");
+
+        gameScreen.classList.remove("hidden");
+
+        updateLeaderboard();
+      }
+    );
+
+    logoutBtn.addEventListener(
+      "click",
+      () => {
+
+        currentUser = null;
+
+        gameScreen.classList.add("hidden");
+
+        signInScreen.classList.remove("hidden");
+      }
+    );
+
+    showLogin.addEventListener(
+      "click",
+      () => {
+
+        loginScreen.classList.add("hidden");
+
+        signInScreen.classList.remove("hidden");
+      }
+    );
+
+    showRegister.addEventListener(
+      "click",
+      () => {
+
+        signInScreen.classList.add("hidden");
+
+        loginScreen.classList.remove("hidden");
+      }
+    );
 
     // ---------------- HELPERS ----------------
 
@@ -785,40 +1195,68 @@
       }, 100);
     }
 
-    function resetUI() {
-
-      answerInput.value = "";
-
-      answerInput.disabled = true;
-
-      submitBtn.disabled = true;
-
-      resultText.textContent = "";
-
-      resultText.className = "result";
-
-      timerLabel.textContent =
-        "⏱ Time: -";
-
-      lengthLabel.textContent =
-        "🔢 Length: -";
-    }
-
     function setResult(message, type) {
 
-      resultText.textContent = message;
+      resultText.textContent =
+        message;
 
       resultText.className =
         `result ${type}`;
     }
 
-    // ---------------- GAME FLOW ----------------
+    // ---------------- LEADERBOARD ----------------
+
+    function updateLeaderboard() {
+
+      const users =
+        getUsers();
+
+      users.sort(
+        (a, b) =>
+          b.highScore - a.highScore
+      );
+
+      leaderboardList.innerHTML = "";
+
+      users.slice(0, 5).forEach(
+        (user, index) => {
+
+          leaderboardList.innerHTML += `
+
+            <div class="leaderboard-item">
+
+              <div class="leaderboard-left">
+
+                <div class="rank">
+                  ${index + 1}
+                </div>
+
+                <div>
+
+                  <div class="leaderboard-name">
+                    ${user.username}
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div class="leaderboard-score">
+                ${user.highScore}
+              </div>
+
+            </div>
+
+          `;
+        }
+      );
+    }
+
+    // ---------------- GAME ----------------
 
     startBtn.addEventListener(
       "click",
       () => {
-
-        resetUI();
 
         const mode =
           modeSelect.value;
@@ -845,7 +1283,8 @@
             generateWord(difficulty);
         }
 
-        currentAnswer = generated;
+        currentAnswer =
+          generated;
 
         showingPhase = true;
 
@@ -857,6 +1296,8 @@
 
         resultText.textContent =
           "Memorise it carefully 👀";
+
+        answerInput.value = "";
 
         answerInput.disabled = true;
 
@@ -915,6 +1356,29 @@
             "correct"
           );
 
+          const users =
+            getUsers();
+
+          const userIndex =
+            users.findIndex(
+              u =>
+                u.username ===
+                currentUser.username
+            );
+
+          if (
+            score >
+            users[userIndex].highScore
+          ) {
+
+            users[userIndex].highScore =
+              score;
+
+            saveUsers(users);
+
+            updateLeaderboard();
+          }
+
         } else {
 
           setResult(
@@ -929,7 +1393,7 @@
       }
     );
 
-    // ---------------- ENTER KEY ----------------
+    // ---------------- ENTER ----------------
 
     answerInput.addEventListener(
       "keydown",
