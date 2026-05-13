@@ -1,3 +1,7 @@
+
+
+
+make this code Look Accually Better
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -279,7 +283,7 @@
         resultText.className = "result correct";
         score += 100;
       } else {
-        resultText.textContent = `Wrong! Answer was: ${currentAnswer}`;
+        resultText.textContent = Wrong! Answer was: ${currentAnswer};
         resultText.className = "result wrong";
       }
 
@@ -296,3 +300,701 @@
   </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Memory Challenge</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #070b14;
+      --card: rgba(17, 24, 39, 0.75);
+      --card-border: rgba(255,255,255,0.08);
+
+      --primary: #7c3aed;
+      --primary-2: #9333ea;
+      --accent: #22d3ee;
+
+      --text: #f8fafc;
+      --muted: #94a3b8;
+
+      --success: #22c55e;
+      --danger: #fb7185;
+
+      --shadow:
+        0 10px 30px rgba(0,0,0,0.4),
+        0 0 80px rgba(124, 58, 237, 0.15);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top left, #1e1b4b 0%, transparent 35%),
+        radial-gradient(circle at bottom right, #0f766e 0%, transparent 30%),
+        linear-gradient(135deg, #020617, #0f172a 50%, #111827);
+
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .background-glow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%);
+      filter: blur(40px);
+      animation: pulse 8s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    @keyframes pulse {
+      0%,100% {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+      50% {
+        transform: scale(1.15);
+        opacity: 1;
+      }
+    }
+
+    .game {
+      position: relative;
+      z-index: 2;
+
+      width: 460px;
+      backdrop-filter: blur(18px);
+
+      background: var(--card);
+      border: 1px solid var(--card-border);
+
+      border-radius: 28px;
+      padding: 30px;
+
+      box-shadow: var(--shadow);
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 26px;
+    }
+
+    .title-wrap h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .title-wrap p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .score-badge {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      padding: 12px 18px;
+      border-radius: 18px;
+      text-align: center;
+      min-width: 90px;
+
+      box-shadow:
+        0 10px 20px rgba(124,58,237,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .score-badge span {
+      display: block;
+      font-size: 0.75rem;
+      opacity: 0.9;
+      margin-bottom: 3px;
+    }
+
+    .score-badge strong {
+      font-size: 1.2rem;
+    }
+
+    .settings {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    select,
+    input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+
+      color: white;
+      border-radius: 14px;
+
+      padding: 14px;
+      font-size: 0.95rem;
+
+      outline: none;
+      transition: 0.25s ease;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: rgba(34,211,238,0.6);
+      box-shadow: 0 0 0 4px rgba(34,211,238,0.12);
+    }
+
+    .display-box {
+      height: 110px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin: 20px 0;
+
+      border-radius: 24px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,0.08),
+          rgba(255,255,255,0.03)
+        );
+
+      border: 1px solid rgba(255,255,255,0.08);
+
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 4px;
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    .display-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(
+          120deg,
+          transparent,
+          rgba(255,255,255,0.08),
+          transparent
+        );
+
+      transform: translateX(-100%);
+      animation: shine 4s infinite;
+    }
+
+    @keyframes shine {
+      100% {
+        transform: translateX(200%);
+      }
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .input-row input {
+      flex: 1;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.25s ease;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 16px;
+      margin-top: 6px;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-2)
+        );
+
+      color: white;
+      font-size: 1rem;
+
+      box-shadow:
+        0 10px 25px rgba(124,58,237,0.35);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.06);
+    }
+
+    .submit-btn {
+      padding: 0 22px;
+      border-radius: 14px;
+
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      color: white;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .result {
+      margin-top: 18px;
+      min-height: 26px;
+
+      font-weight: 700;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .correct {
+      color: var(--success);
+      text-shadow: 0 0 12px rgba(34,197,94,0.4);
+    }
+
+    .wrong {
+      color: var(--danger);
+      text-shadow: 0 0 12px rgba(251,113,133,0.35);
+    }
+
+    .hint {
+      margin-top: 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 520px) {
+      .game {
+        width: 100%;
+        padding: 22px;
+      }
+
+      .settings {
+        grid-template-columns: 1fr;
+      }
+
+      .display-box {
+        font-size: 1.5rem;
+      }
+
+      .top {
+        flex-direction: column;
+        gap: 18px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="background-glow"></div>
+
+  <div class="game">
+
+    <div class="top">
+      <div class="title-wrap">
+        <h1>🧠 Memory Challenge</h1>
+        <p>Test your short-term memory speed.</p>
+      </div>
+
+      <div class="score-badge">
+        <span>SCORE</span>
+        <strong id="scoreText">0</strong>
+      </div>
+    </div>
+
+    <div class="settings">
+      <div class="field">
+        <label>Mode</label>
+
+        <select id="modeSelect">
+          <option value="code">Random Code</option>
+          <option value="words">Words</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Difficulty</label>
+
+        <select id="difficultySelect">
+          <option value="easy">Easy</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="primary-btn" id="startBtn">
+      Start Challenge
+    </button>
+
+    <div class="display-box" id="displayArea">
+      Ready?
+    </div>
+
+    <div class="stats">
+      <span id="timerLabel">⏱ Time: -</span>
+      <span id="lengthLabel">🔢 Length: -</span>
+    </div>
+
+    <div class="input-row">
+      <input
+        id="answerInput"
+        type="text"
+        placeholder="Type what you remember..."
+        autocomplete="off"
+        disabled
+      />
+
+      <button
+        class="submit-btn"
+        id="submitBtn"
+        disabled
+      >
+        Submit
+      </button>
+    </div>
+
+    <div class="result" id="resultText"></div>
+
+    <div class="hint">
+      Press ENTER to submit faster ⚡
+    </div>
+
+  </div>
+
+  <script>
+    // ---------------- CONFIG ----------------
+
+    const codeLengths = {
+      easy: 5,
+      intermediate: 7,
+      hard: 10
+    };
+
+    const times = {
+      easy: 5,
+      intermediate: 3,
+      hard: 1.5
+    };
+
+    const wordPools = {
+      easy: [
+        "flame",
+        "crisp",
+        "vivid",
+        "shard",
+        "lunar",
+        "prism",
+        "ember"
+      ],
+
+      intermediate: [
+        "crystal",
+        "shimmer",
+        "radiant",
+        "horizon",
+        "spectra",
+        "velvety",
+        "amplify"
+      ],
+
+      hard: [
+        "luminosity",
+        "reflection",
+        "stargazers",
+        "afterglow",
+        "resonating",
+        "spellbound"
+      ]
+    };
+
+    const chars =
+      "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    // ---------------- STATE ----------------
+
+    let currentAnswer = "";
+    let currentTimer = null;
+    let timeLeft = 0;
+    let score = 0;
+    let showingPhase = false;
+
+    // ---------------- ELEMENTS ----------------
+
+    const modeSelect =
+      document.getElementById("modeSelect");
+
+    const difficultySelect =
+      document.getElementById("difficultySelect");
+
+    const startBtn =
+      document.getElementById("startBtn");
+
+    const displayArea =
+      document.getElementById("displayArea");
+
+    const timerLabel =
+      document.getElementById("timerLabel");
+
+    const lengthLabel =
+      document.getElementById("lengthLabel");
+
+    const answerInput =
+      document.getElementById("answerInput");
+
+    const submitBtn =
+      document.getElementById("submitBtn");
+
+    const resultText =
+      document.getElementById("resultText");
+
+    const scoreText =
+      document.getElementById("scoreText");
+
+    // ---------------- HELPERS ----------------
+
+    function randomFromArray(arr) {
+      return arr[
+        Math.floor(Math.random() * arr.length)
+      ];
+    }
+
+    function generateCode(length) {
+      let output = "";
+
+      for (let i = 0; i < length; i++) {
+        output += chars[
+          Math.floor(Math.random() * chars.length)
+        ];
+      }
+
+      return output;
+    }
+
+    function generateWord(difficulty) {
+      return randomFromArray(
+        wordPools[difficulty]
+      );
+    }
+
+    function setTimer(seconds, onEnd) {
+      clearInterval(currentTimer);
+
+      timeLeft = seconds;
+
+      updateTimer();
+
+      currentTimer = setInterval(() => {
+        timeLeft -= 0.1;
+
+        if (timeLeft <= 0) {
+          clearInterval(currentTimer);
+
+          timerLabel.textContent =
+            "⏱ Time: 0.0s";
+
+          onEnd();
+
+          return;
+        }
+
+        updateTimer();
+
+      }, 100);
+    }
+
+    function updateTimer() {
+      timerLabel.textContent =
+        `⏱ Time: ${timeLeft.toFixed(1)}s`;
+    }
+
+    function resetUI() {
+
+      answerInput.value = "";
+
+      answerInput.disabled = true;
+      submitBtn.disabled = true;
+
+      resultText.textContent = "";
+      resultText.className = "result";
+
+      timerLabel.textContent =
+        "⏱ Time: -";
+
+      lengthLabel.textContent =
+        "🔢 Length: -";
+    }
+
+    function flashResult(type) {
+      resultText.classList.remove(
+        "correct",
+        "wrong"
+      );
+
+      void resultText.offsetWidth;
+
+      resultText.classList.add(type);
+    }
+
+    // ---------------- GAME ----------------
+
+    startBtn.addEventListener("click", () => {
+
+      resetUI();
+
+      const mode = modeSelect.value;
+      const difficulty =
+        difficultySelect.value;
+
+      const length =
+        codeLengths[difficulty];
+
+      const showTime =
+        times[difficulty];
+
+      let generated;
+
+      if (mode === "code") {
+        generated = generateCode(length);
+      } else {
+        generated = generateWord(difficulty);
+      }
+
+      currentAnswer = generated;
+
+      displayArea.textContent = generated;
+
+      lengthLabel.textContent =
+        `🔢 Length: ${generated.length}`;
+
+      showingPhase = true;
+
+      resultText.textContent =
+        "Memorise it carefully 👀";
+
+      setTimer(showTime, () => {
+
+        displayArea.textContent = "•••••";
+
+        showingPhase = false;
+
+        answerInput.disabled = false;
+        submitBtn.disabled = false;
+
+        answerInput.focus();
+
+        resultText.textContent =
+          "Now type what you remember ✍️";
+
+        timerLabel.textContent =
+          "⏱ Time: Done";
+      });
+    });
+
+    submitBtn.addEventListener("click", () => {
+
+      if (
+        showingPhase ||
+        !currentAnswer
+      ) return;
+
+      const userInput =
+        answerInput.value.trim();
+
+      if (!userInput) return;
+
+      if (
+        userInput.toLowerCase() ===
+        currentAnswer.toLowerCase()
+      ) {
+
+        score += 100;
+
+        resultText.textContent =
+          "✔️ Correct! +100 points";
+
+        flashResult("correct");
+
+      } else {
+
+        resultText.textContent =
+          `❌ Wrong! Answer: ${currentAnswer}`;
+
+        flashResult("wrong");
+      }
+
+      scoreText.textContent = score;
+
+      answerInput.disabled = true;
+      submitBtn.disabled = true;
+    });
+
+    answerInput.addEventListener(
+      "keydown",
+      (e) => {
+
+        if (e.key === "Enter") {
+          submitBtn.click();
+        }
+      }
+    );
+  </script>
+
+</body>
+</html>
+
