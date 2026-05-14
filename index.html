@@ -1,207 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-<meta charset="UTF-8" />
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
-/>
-
-<title>ReCall It!</title>
-
-<style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-:root{
-
-  --theme:#3b82f6;
-  --theme-dark:#2563eb;
-
-  --bg:#020617;
-  --bg2:#0f172a;
-
-  --card:rgba(15,23,42,.82);
-
-  --text:#f8fafc;
-  --muted:#94a3b8;
-
-  --success:#22c55e;
-  --danger:#ef4444;
-}
-
-body{
-
-  min-height:100vh;
-
-  background:
-    radial-gradient(circle at top left,
-    rgba(59,130,246,.15),
-    transparent 25%),
-
-    radial-gradient(circle at bottom right,
-    rgba(139,92,246,.15),
-    transparent 25%),
-
-    linear-gradient(
-      135deg,
-      var(--bg),
-      var(--bg2)
-    );
-
-  color:var(--text);
-
-  font-family:
-    Inter,
-    system-ui,
-    sans-serif;
-
-  overflow-x:hidden;
-}
+```css id="vlnm0u"
+/* =========================================
+   REPLACE YOUR OLD .app / .panel LAYOUT CSS
+   WITH THIS ENTIRE SECTION
+========================================= */
 
 /* =========================
-   LOGIN MODAL
-========================= */
-
-.login-overlay{
-
-  position:fixed;
-  inset:0;
-
-  backdrop-filter:blur(20px);
-
-  background:
-    rgba(0,0,0,.45);
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
-
-  z-index:9999;
-}
-
-.login-modal{
-
-  width:420px;
-
-  background:
-    rgba(15,23,42,.95);
-
-  border:
-    1px solid rgba(255,255,255,.08);
-
-  border-radius:32px;
-
-  padding:34px;
-
-  box-shadow:
-    0 30px 80px rgba(0,0,0,.45);
-
-  animation:
-    popup .35s ease;
-}
-
-@keyframes popup{
-
-  from{
-    opacity:0;
-    transform:translateY(20px) scale(.95);
-  }
-
-  to{
-    opacity:1;
-    transform:none;
-  }
-}
-
-.login-title{
-
-  font-size:2.2rem;
-  font-weight:900;
-
-  margin-bottom:10px;
-}
-
-.login-sub{
-
-  color:var(--muted);
-
-  margin-bottom:28px;
-}
-
-.login-modal input{
-
-  width:100%;
-
-  margin-bottom:14px;
-
-  padding:16px;
-
-  border-radius:18px;
-
-  border:
-    1px solid rgba(255,255,255,.08);
-
-  background:
-    rgba(255,255,255,.05);
-
-  color:white;
-
-  outline:none;
-
-  transition:.25s;
-}
-
-.login-modal input:focus{
-
-  border-color:var(--theme);
-
-  box-shadow:
-    0 0 0 4px rgba(59,130,246,.15);
-}
-
-.login-btn{
-
-  width:100%;
-
-  padding:16px;
-
-  border:none;
-
-  border-radius:18px;
-
-  background:var(--theme);
-
-  color:white;
-
-  font-weight:800;
-
-  cursor:pointer;
-
-  transition:.25s;
-}
-
-.login-btn:hover{
-
-  transform:translateY(-2px);
-
-  background:var(--theme-dark);
-}
-
-/* =========================
-   APP
+   APP LAYOUT
 ========================= */
 
 .app{
 
   width:100%;
-  max-width:1500px;
+  max-width:1600px;
 
   margin:auto;
 
@@ -210,47 +20,66 @@ body{
   display:grid;
 
   grid-template-columns:
-    320px
-    1fr
-    240px;
+    290px
+    minmax(650px, 1fr)
+    260px;
 
-  gap:24px;
+  gap:26px;
 
-  padding:28px;
+  padding:34px;
+
+  align-items:start;
 }
 
 /* =========================
-   PANELS
+   COLUMN STRUCTURE
 ========================= */
 
-.panel{
+.left-column,
+.center-column,
+.right-column{
+
+  display:flex;
+  flex-direction:column;
+
+  gap:24px;
+}
+
+/* =========================
+   CARD SYSTEM
+========================= */
+
+.card{
 
   background:
-    var(--card);
+    rgba(15,23,42,.82);
 
   border:
-    1px solid rgba(255,255,255,.08);
+    1px solid rgba(255,255,255,.06);
 
   border-radius:32px;
 
   backdrop-filter:blur(20px);
 
   box-shadow:
-    0 10px 40px rgba(0,0,0,.35);
+    0 12px 40px rgba(0,0,0,.35);
+
+  transition:.25s ease;
+}
+
+.card:hover{
+
+  border-color:
+    rgba(255,255,255,.12);
 }
 
 /* =========================
-   LEFT
+   LEADERBOARD CARD
 ========================= */
 
-.left{
+.leaderboard-card{
 
-  padding:22px;
-
-  display:flex;
-  flex-direction:column;
-
-  gap:22px;
+  padding:24px;
 }
 
 .section-title{
@@ -258,7 +87,7 @@ body{
   font-size:1.1rem;
   font-weight:800;
 
-  margin-bottom:16px;
+  margin-bottom:18px;
 }
 
 .leaderboard{
@@ -271,10 +100,6 @@ body{
 
 .leaderboard-item{
 
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
   padding:14px;
 
   border-radius:18px;
@@ -282,8 +107,19 @@ body{
   background:
     rgba(255,255,255,.04);
 
-  border:
-    1px solid rgba(255,255,255,.04);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  transition:.25s;
+}
+
+.leaderboard-item:hover{
+
+  background:
+    rgba(255,255,255,.07);
+
+  transform:translateY(-2px);
 }
 
 .lb-left{
@@ -310,12 +146,22 @@ body{
   font-weight:800;
 }
 
+/* =========================
+   ROOM CARD
+========================= */
+
+.rooms-card{
+
+  padding:24px;
+}
+
 .party-input{
 
   display:flex;
+
   gap:10px;
 
-  margin-bottom:16px;
+  margin-bottom:18px;
 }
 
 .party-input input{
@@ -327,7 +173,8 @@ body{
 
   display:flex;
   flex-direction:column;
-  gap:10px;
+
+  gap:12px;
 }
 
 .party{
@@ -345,80 +192,85 @@ body{
 }
 
 /* =========================
-   CENTER
+   HEADER CARD
 ========================= */
 
-.center{
+.header-card{
 
-  padding:34px;
+  padding:28px 34px;
 
-  position:relative;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  min-height:150px;
 }
 
-.title{
+.title-wrap h1{
 
-  text-align:center;
-
-  margin-bottom:34px;
-}
-
-.title h1{
-
-  font-size:3rem;
+  font-size:3.2rem;
   font-weight:900;
 
   letter-spacing:-2px;
+
+  margin-bottom:10px;
 }
 
-.title p{
+.title-wrap p{
 
   color:var(--muted);
 
-  margin-top:10px;
+  font-size:1rem;
 }
 
 .score-box{
 
-  position:absolute;
-
-  top:28px;
-  right:28px;
-
   width:120px;
+  height:120px;
+
+  border-radius:30px;
 
   background:var(--theme);
 
-  border-radius:24px;
-
-  padding:18px;
-
-  text-align:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
 
   box-shadow:
-    0 15px 30px rgba(0,0,0,.35);
+    0 20px 40px rgba(0,0,0,.35);
 }
 
 .score-box span{
 
-  display:block;
-
   font-size:.8rem;
 
   margin-bottom:6px;
+
+  opacity:.9;
 }
 
 .score-box strong{
 
-  font-size:2rem;
+  font-size:2.3rem;
+}
+
+/* =========================
+   GAME CARD
+========================= */
+
+.game-card{
+
+  padding:32px;
 }
 
 .row{
 
   display:flex;
 
-  gap:16px;
+  gap:18px;
 
-  margin-bottom:18px;
+  margin-bottom:22px;
 }
 
 .field{
@@ -429,11 +281,11 @@ body{
 
   display:block;
 
-  margin-bottom:8px;
+  margin-bottom:10px;
 
   color:var(--muted);
 
-  font-size:.9rem;
+  font-size:.92rem;
   font-weight:700;
 }
 
@@ -442,7 +294,7 @@ input{
 
   width:100%;
 
-  padding:15px;
+  padding:16px;
 
   border-radius:18px;
 
@@ -455,6 +307,17 @@ input{
   color:white;
 
   outline:none;
+
+  transition:.25s;
+}
+
+select:focus,
+input:focus{
+
+  border-color:var(--theme);
+
+  box-shadow:
+    0 0 0 4px rgba(255,255,255,.04);
 }
 
 select option{
@@ -465,7 +328,7 @@ select option{
 
   width:100%;
 
-  padding:17px;
+  padding:18px;
 
   border:none;
 
@@ -484,45 +347,46 @@ select option{
 
 .main-btn:hover{
 
-  background:var(--theme-dark);
-
   transform:translateY(-2px);
+
+  filter:brightness(1.05);
 }
 
 .display{
 
-  height:170px;
+  height:180px;
 
   margin-top:24px;
+  margin-bottom:20px;
 
-  border-radius:32px;
+  border-radius:34px;
 
   background:
     linear-gradient(
       135deg,
-      rgba(255,255,255,.08),
+      rgba(255,255,255,.07),
       rgba(255,255,255,.03)
     );
 
   border:
-    1px solid rgba(255,255,255,.08);
+    1px solid rgba(255,255,255,.06);
 
   display:flex;
   justify-content:center;
   align-items:center;
 
-  font-size:2.6rem;
+  font-size:2.8rem;
   font-weight:900;
 
-  letter-spacing:4px;
+  letter-spacing:6px;
 }
 
 .info{
 
-  margin-top:18px;
-
   display:flex;
   justify-content:space-between;
+
+  margin-bottom:22px;
 
   color:var(--muted);
 }
@@ -530,16 +394,15 @@ select option{
 .answer-row{
 
   display:flex;
-  gap:12px;
 
-  margin-top:20px;
+  gap:14px;
 }
 
 .submit-btn{
 
-  padding:0 26px;
-
   border:none;
+
+  padding:0 28px;
 
   border-radius:18px;
 
@@ -554,12 +417,13 @@ select option{
 
 .result{
 
-  margin-top:24px;
+  margin-top:26px;
 
   text-align:center;
 
   min-height:24px;
 
+  font-size:1.1rem;
   font-weight:800;
 }
 
@@ -573,7 +437,7 @@ select option{
 
 .footer{
 
-  margin-top:28px;
+  margin-top:26px;
 
   text-align:center;
 
@@ -583,35 +447,23 @@ select option{
 }
 
 /* =========================
-   RIGHT
+   PROFILE CARD
 ========================= */
 
-.right{
+.profile-card{
 
-  padding:22px;
-
-  display:flex;
-  flex-direction:column;
-
-  gap:18px;
+  padding:24px;
 }
 
 .user-card{
-
-  padding:18px;
-
-  border-radius:24px;
-
-  background:
-    rgba(255,255,255,.04);
 
   text-align:center;
 }
 
 .user-avatar{
 
-  width:70px;
-  height:70px;
+  width:82px;
+  height:82px;
 
   border-radius:50%;
 
@@ -623,45 +475,49 @@ select option{
 
   margin:auto;
 
-  font-size:1.8rem;
+  font-size:2rem;
   font-weight:900;
 
-  margin-bottom:14px;
+  margin-bottom:16px;
 }
 
 .user-name{
 
-  font-size:1.1rem;
+  font-size:1.15rem;
   font-weight:800;
 }
 
 .user-email{
 
-  margin-top:6px;
-
   color:var(--muted);
 
-  font-size:.85rem;
+  margin-top:6px;
+
+  font-size:.88rem;
+
+  word-break:break-word;
 }
 
 .side-btn{
 
   width:100%;
 
-  padding:14px;
+  padding:15px;
 
   border:none;
 
   border-radius:18px;
 
   background:
-    rgba(255,255,255,.06);
+    rgba(255,255,255,.05);
 
   color:white;
 
+  font-weight:700;
+
   cursor:pointer;
 
-  font-weight:700;
+  margin-top:16px;
 
   transition:.25s;
 }
@@ -671,12 +527,17 @@ select option{
   transform:translateY(-2px);
 
   background:
-    rgba(255,255,255,.1);
+    rgba(255,255,255,.08);
 }
 
 /* =========================
-   THEME PICKER
+   THEME CARD
 ========================= */
+
+.theme-card{
+
+  padding:24px;
+}
 
 .theme-grid{
 
@@ -685,7 +546,7 @@ select option{
   grid-template-columns:
     repeat(4,1fr);
 
-  gap:12px;
+  gap:14px;
 }
 
 .theme{
@@ -705,7 +566,7 @@ select option{
 
 .theme:hover{
 
-  transform:scale(1.05);
+  transform:scale(1.08);
 }
 
 .theme.active{
@@ -714,123 +575,71 @@ select option{
 }
 
 /* =========================
-   BUTTON STATES
-========================= */
-
-button:disabled{
-
-  opacity:.45;
-
-  cursor:not-allowed;
-
-  transform:none !important;
-}
-
-/* =========================
    RESPONSIVE
 ========================= */
 
-@media(max-width:1200px){
+@media(max-width:1350px){
 
   .app{
 
     grid-template-columns:1fr;
   }
+
+  .left-column,
+  .center-column,
+  .right-column{
+
+    width:100%;
+  }
 }
 
 @media(max-width:700px){
 
-  .row{
+  .header-card{
+
     flex-direction:column;
+    align-items:flex-start;
+
+    gap:24px;
   }
 
+  .title-wrap h1{
+
+    font-size:2.4rem;
+  }
+
+  .row,
   .answer-row{
+
     flex-direction:column;
   }
 
-  .score-box{
+  .display{
 
-    position:static;
-
-    margin-bottom:20px;
+    font-size:2rem;
   }
 
-  .title{
-    text-align:left;
-  }
+  .app{
 
-  .title h1{
-    font-size:2.2rem;
+    padding:18px;
   }
 }
+```
 
-</style>
-
-</head>
-
-<body>
-
-<!-- =========================
-     LOGIN MODAL
-========================= -->
-
-<div
-  class="login-overlay"
-  id="loginOverlay"
->
-
-  <div class="login-modal">
-
-    <div class="login-title">
-      Welcome Back 👋
-    </div>
-
-    <div class="login-sub">
-      Login to continue playing.
-    </div>
-
-    <input
-      type="text"
-      id="loginUsername"
-      placeholder="Username"
-    />
-
-    <input
-      type="email"
-      id="loginEmail"
-      placeholder="Email"
-    />
-
-    <input
-      type="password"
-      id="loginPassword"
-      placeholder="Password"
-    />
-
-    <button
-      class="login-btn"
-      id="loginBtn"
-    >
-      Login
-    </button>
-
-  </div>
-
-</div>
-
-<!-- =========================
-     APP
-========================= -->
+```html id="yw9o85"
+<!-- =========================================
+     REPLACE YOUR ENTIRE .app HTML WITH THIS
+========================================= -->
 
 <div class="app">
 
   <!-- =========================
-       LEFT PANEL
+       LEFT SIDE
   ========================= -->
 
-  <aside class="panel left">
+  <div class="left-column">
 
-    <div>
+    <div class="card leaderboard-card">
 
       <div class="section-title">
         🏆 Leaderboard
@@ -843,7 +652,7 @@ button:disabled{
 
     </div>
 
-    <div>
+    <div class="card rooms-card">
 
       <div class="section-title">
         🎉 Multiplayer Rooms
@@ -873,193 +682,204 @@ button:disabled{
 
     </div>
 
-  </aside>
+  </div>
 
   <!-- =========================
-       GAME PANEL
+       CENTER SIDE
   ========================= -->
 
-  <main class="panel center">
+  <div class="center-column">
 
-    <div class="score-box">
+    <div class="card header-card">
 
-      <span>SCORE</span>
+      <div class="title-wrap">
 
-      <strong id="scoreText">
-        0
-      </strong>
+        <h1>
+          🧠 ReCall It!
+        </h1>
 
-    </div>
-
-    <div class="title">
-
-      <h1>
-        🧠 ReCall It!
-      </h1>
-
-      <p>
-        Ultimate Memory Challenge
-      </p>
-
-    </div>
-
-    <div class="row">
-
-      <div class="field">
-
-        <label class="label">
-          Mode
-        </label>
-
-        <select id="modeSelect">
-
-          <option value="code">
-            Random Code
-          </option>
-
-          <option value="words">
-            Words
-          </option>
-
-        </select>
+        <p>
+          Ultimate Memory Challenge
+        </p>
 
       </div>
 
-      <div class="field">
+      <div class="score-box">
 
-        <label class="label">
-          Difficulty
-        </label>
+        <span>
+          SCORE
+        </span>
 
-        <select id="difficultySelect">
-
-          <option value="easy">
-            Easy
-          </option>
-
-          <option value="intermediate">
-            Intermediate
-          </option>
-
-          <option value="hard">
-            Hard
-          </option>
-
-        </select>
+        <strong id="scoreText">
+          0
+        </strong>
 
       </div>
 
     </div>
 
-    <button
-      class="main-btn"
-      id="startBtn"
-    >
-      Start Challenge
-    </button>
+    <div class="card game-card">
 
-    <div
-      class="display"
-      id="displayArea"
-    >
-      Ready?
-    </div>
+      <div class="row">
 
-    <div class="info">
+        <div class="field">
 
-      <span id="timerLabel">
-        ⏱ Time: -
-      </span>
+          <label class="label">
+            Mode
+          </label>
 
-      <span id="lengthLabel">
-        🔢 Length: -
-      </span>
+          <select id="modeSelect">
 
-    </div>
+            <option value="code">
+              Random Code
+            </option>
 
-    <div class="answer-row">
+            <option value="words">
+              Words
+            </option>
 
-      <input
-        type="text"
-        id="answerInput"
-        placeholder="Type what you remember..."
-        disabled
-      />
+          </select>
+
+        </div>
+
+        <div class="field">
+
+          <label class="label">
+            Difficulty
+          </label>
+
+          <select id="difficultySelect">
+
+            <option value="easy">
+              Easy
+            </option>
+
+            <option value="intermediate">
+              Intermediate
+            </option>
+
+            <option value="hard">
+              Hard
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
 
       <button
-        class="submit-btn"
-        id="submitBtn"
-        disabled
+        class="main-btn"
+        id="startBtn"
       >
-        Submit
+        Start Challenge
+      </button>
+
+      <div
+        class="display"
+        id="displayArea"
+      >
+        Ready?
+      </div>
+
+      <div class="info">
+
+        <span id="timerLabel">
+          ⏱ Time: -
+        </span>
+
+        <span id="lengthLabel">
+          🔢 Length: -
+        </span>
+
+      </div>
+
+      <div class="answer-row">
+
+        <input
+          type="text"
+          id="answerInput"
+          placeholder="Type what you remember..."
+          disabled
+        />
+
+        <button
+          class="submit-btn"
+          id="submitBtn"
+          disabled
+        >
+          Submit
+        </button>
+
+      </div>
+
+      <div
+        class="result"
+        id="resultText"
+      ></div>
+
+      <div class="footer">
+
+        +1 point per correct answer ⚡
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+       RIGHT SIDE
+  ========================= -->
+
+  <div class="right-column">
+
+    <div class="card profile-card">
+
+      <div class="user-card">
+
+        <div
+          class="user-avatar"
+          id="avatar"
+        >
+          G
+        </div>
+
+        <div
+          class="user-name"
+          id="usernameText"
+        >
+          Guest
+        </div>
+
+        <div
+          class="user-email"
+          id="emailText"
+        >
+          guest@email.com
+        </div>
+
+      </div>
+
+      <button
+        class="side-btn"
+        id="dailyBtn"
+      >
+        🎁 Claim Daily +50
+      </button>
+
+      <button
+        class="side-btn"
+        id="logoutBtn"
+      >
+        🚪 Logout
       </button>
 
     </div>
 
-    <div
-      class="result"
-      id="resultText"
-    ></div>
+    <div class="card theme-card">
 
-    <div class="footer">
-
-      +1 point per correct answer ⚡
-
-    </div>
-
-  </main>
-
-  <!-- =========================
-       RIGHT PANEL
-  ========================= -->
-
-  <aside class="panel right">
-
-    <div class="user-card">
-
-      <div
-        class="user-avatar"
-        id="avatar"
-      >
-        G
-      </div>
-
-      <div
-        class="user-name"
-        id="usernameText"
-      >
-        Guest
-      </div>
-
-      <div
-        class="user-email"
-        id="emailText"
-      >
-        guest@example.com
-      </div>
-
-    </div>
-
-    <button
-      class="side-btn"
-      id="dailyBtn"
-    >
-      🎁 Claim Daily +50
-    </button>
-
-    <button
-      class="side-btn"
-      id="logoutBtn"
-    >
-      🚪 Logout
-    </button>
-
-    <div>
-
-      <div
-        class="section-title"
-        style="margin-bottom:14px;"
-      >
+      <div class="section-title">
         🎨 Themes
       </div>
 
@@ -1135,680 +955,7 @@ button:disabled{
 
     </div>
 
-  </aside>
+  </div>
 
 </div>
-
-<script>
-
-/* =========================
-   CONFIG
-========================= */
-
-const codeLengths={
-
-  easy:5,
-  intermediate:7,
-  hard:10
-};
-
-const times={
-
-  easy:5,
-  intermediate:3,
-  hard:1.5
-};
-
-const wordPools={
-
-  easy:[
-    "flame",
-    "crisp",
-    "vivid",
-    "ember",
-    "lunar"
-  ],
-
-  intermediate:[
-    "crystal",
-    "horizon",
-    "shimmer",
-    "spectra"
-  ],
-
-  hard:[
-    "luminosity",
-    "reflection",
-    "spellbound",
-    "afterglow"
-  ]
-};
-
-const chars=
-"abcdefghijklmnopqrstuvwxyz0123456789";
-
-/* =========================
-   STATE
-========================= */
-
-let currentAnswer="";
-let currentTimer=null;
-let timeLeft=0;
-let score=0;
-let showingPhase=false;
-
-/* =========================
-   ELEMENTS
-========================= */
-
-const loginOverlay=
-document.getElementById("loginOverlay");
-
-const loginBtn=
-document.getElementById("loginBtn");
-
-const usernameText=
-document.getElementById("usernameText");
-
-const emailText=
-document.getElementById("emailText");
-
-const avatar=
-document.getElementById("avatar");
-
-const scoreText=
-document.getElementById("scoreText");
-
-const displayArea=
-document.getElementById("displayArea");
-
-const timerLabel=
-document.getElementById("timerLabel");
-
-const lengthLabel=
-document.getElementById("lengthLabel");
-
-const answerInput=
-document.getElementById("answerInput");
-
-const submitBtn=
-document.getElementById("submitBtn");
-
-const resultText=
-document.getElementById("resultText");
-
-const startBtn=
-document.getElementById("startBtn");
-
-const modeSelect=
-document.getElementById("modeSelect");
-
-const difficultySelect=
-document.getElementById("difficultySelect");
-
-/* =========================
-   LOGIN
-========================= */
-
-function loadUser(){
-
-  const user=
-    JSON.parse(
-      localStorage.getItem("recall-user")
-    );
-
-  if(!user)return;
-
-  usernameText.textContent=
-    user.username;
-
-  emailText.textContent=
-    user.email;
-
-  avatar.textContent=
-    user.username[0]
-    .toUpperCase();
-
-  loginOverlay.style.display=
-    "none";
-}
-
-loginBtn.addEventListener(
-"click",
-()=>{
-
-  const username=
-    document
-    .getElementById(
-      "loginUsername"
-    )
-    .value
-    .trim();
-
-  const email=
-    document
-    .getElementById(
-      "loginEmail"
-    )
-    .value
-    .trim();
-
-  const password=
-    document
-    .getElementById(
-      "loginPassword"
-    )
-    .value
-    .trim();
-
-  if(
-    !username ||
-    !email ||
-    !password
-  ) return;
-
-  localStorage.setItem(
-    "recall-user",
-
-    JSON.stringify({
-
-      username,
-      email,
-      password
-    })
-  );
-
-  loadUser();
-});
-
-/* =========================
-   LEADERBOARD
-========================= */
-
-function saveLeaderboard(){
-
-  const user=
-    JSON.parse(
-      localStorage.getItem("recall-user")
-    );
-
-  if(!user)return;
-
-  let leaderboard=
-    JSON.parse(
-      localStorage.getItem(
-        "recall-leaderboard"
-      )
-    ) || [];
-
-  const existing=
-    leaderboard.find(
-      p=>p.username===user.username
-    );
-
-  if(existing){
-
-    existing.score=score;
-
-  }else{
-
-    leaderboard.push({
-
-      username:user.username,
-      score
-    });
-  }
-
-  leaderboard.sort(
-    (a,b)=>
-      b.score-a.score
-  );
-
-  localStorage.setItem(
-
-    "recall-leaderboard",
-
-    JSON.stringify(leaderboard)
-  );
-
-  renderLeaderboard();
-}
-
-function renderLeaderboard(){
-
-  const leaderboard=
-    JSON.parse(
-      localStorage.getItem(
-        "recall-leaderboard"
-      )
-    ) || [];
-
-  const container=
-    document.getElementById(
-      "leaderboard"
-    );
-
-  container.innerHTML="";
-
-  leaderboard
-  .slice(0,10)
-  .forEach((player,index)=>{
-
-    container.innerHTML+=`
-
-      <div class="leaderboard-item">
-
-        <div class="lb-left">
-
-          <div class="rank">
-            ${index+1}
-          </div>
-
-          <div>
-            ${player.username}
-          </div>
-
-        </div>
-
-        <div>
-          ${player.score}
-        </div>
-
-      </div>
-
-    `;
-  });
-}
-
-/* =========================
-   DAILY REWARD
-========================= */
-
-document
-.getElementById("dailyBtn")
-.addEventListener(
-"click",
-()=>{
-
-  const today=
-    new Date()
-    .toDateString();
-
-  const claimed=
-    localStorage.getItem(
-      "daily-reward"
-    );
-
-  if(today===claimed){
-
-    alert(
-      "Already claimed today!"
-    );
-
-    return;
-  }
-
-  score+=50;
-
-  scoreText.textContent=score;
-
-  localStorage.setItem(
-    "daily-reward",
-    today
-  );
-
-  saveLeaderboard();
-
-  alert(
-    "+50 points claimed!"
-  );
-});
-
-/* =========================
-   ROOMS
-========================= */
-
-function renderRooms(){
-
-  const rooms=
-    JSON.parse(
-      localStorage.getItem(
-        "recall-rooms"
-      )
-    ) || [];
-
-  const roomList=
-    document.getElementById(
-      "roomList"
-    );
-
-  roomList.innerHTML="";
-
-  rooms.forEach(room=>{
-
-    roomList.innerHTML+=`
-
-      <div class="party">
-
-        <span>
-          🎮 ${room}
-        </span>
-
-        <button
-          class="submit-btn"
-        >
-          Join
-        </button>
-
-      </div>
-
-    `;
-  });
-}
-
-document
-.getElementById("createRoomBtn")
-.addEventListener(
-"click",
-()=>{
-
-  const input=
-    document.getElementById(
-      "roomInput"
-    );
-
-  const value=
-    input.value.trim();
-
-  if(!value)return;
-
-  let rooms=
-    JSON.parse(
-      localStorage.getItem(
-        "recall-rooms"
-      )
-    ) || [];
-
-  rooms.push(value);
-
-  localStorage.setItem(
-    "recall-rooms",
-    JSON.stringify(rooms)
-  );
-
-  input.value="";
-
-  renderRooms();
-});
-
-/* =========================
-   HELPERS
-========================= */
-
-function randomFromArray(arr){
-
-  return arr[
-    Math.floor(
-      Math.random()*arr.length
-    )
-  ];
-}
-
-function generateCode(length){
-
-  let out="";
-
-  for(let i=0;i<length;i++){
-
-    out+=chars[
-      Math.floor(
-        Math.random()*chars.length
-      )
-    ];
-  }
-
-  return out;
-}
-
-function generateWord(difficulty){
-
-  return randomFromArray(
-    wordPools[difficulty]
-  );
-}
-
-function updateTimer(){
-
-  timerLabel.textContent=
-  `⏱ Time: ${timeLeft.toFixed(1)}s`;
-}
-
-function setTimer(seconds,onEnd){
-
-  clearInterval(currentTimer);
-
-  timeLeft=seconds;
-
-  updateTimer();
-
-  currentTimer=setInterval(()=>{
-
-    timeLeft-=0.1;
-
-    if(timeLeft<=0){
-
-      clearInterval(currentTimer);
-
-      onEnd();
-
-      return;
-    }
-
-    updateTimer();
-
-  },100);
-}
-
-/* =========================
-   GAME
-========================= */
-
-startBtn.addEventListener(
-"click",
-()=>{
-
-  const mode=
-    modeSelect.value;
-
-  const difficulty=
-    difficultySelect.value;
-
-  const length=
-    codeLengths[difficulty];
-
-  const showTime=
-    times[difficulty];
-
-  let generated="";
-
-  if(mode==="code"){
-
-    generated=
-      generateCode(length);
-
-  }else{
-
-    generated=
-      generateWord(difficulty);
-  }
-
-  currentAnswer=generated;
-
-  showingPhase=true;
-
-  displayArea.textContent=
-    generated;
-
-  lengthLabel.textContent=
-    `🔢 Length: ${generated.length}`;
-
-  resultText.textContent=
-    "Memorise it 👀";
-
-  answerInput.value="";
-
-  answerInput.disabled=true;
-
-  submitBtn.disabled=true;
-
-  setTimer(showTime,()=>{
-
-    displayArea.textContent=
-      "•••••";
-
-    showingPhase=false;
-
-    answerInput.disabled=false;
-
-    submitBtn.disabled=false;
-
-    answerInput.focus();
-
-    timerLabel.textContent=
-      "⏱ Done";
-
-    resultText.textContent=
-      "Type it ✍️";
-  });
-});
-
-/* =========================
-   SUBMIT
-========================= */
-
-submitBtn.addEventListener(
-"click",
-()=>{
-
-  if(
-    showingPhase ||
-    !currentAnswer
-  ) return;
-
-  const userInput=
-    answerInput.value.trim();
-
-  if(!userInput)return;
-
-  if(
-
-    userInput.toLowerCase()===
-
-    currentAnswer.toLowerCase()
-  ){
-
-    score+=1;
-
-    scoreText.textContent=
-      score;
-
-    resultText.textContent=
-      "✔ Correct!";
-
-    resultText.className=
-      "result correct";
-
-    saveLeaderboard();
-
-  }else{
-
-    resultText.textContent=
-      `❌ ${currentAnswer}`;
-
-    resultText.className=
-      "result wrong";
-  }
-
-  answerInput.disabled=true;
-
-  submitBtn.disabled=true;
-});
-
-/* =========================
-   ENTER
-========================= */
-
-answerInput.addEventListener(
-"keydown",
-e=>{
-
-  if(e.key==="Enter"){
-
-    submitBtn.click();
-  }
-});
-
-/* =========================
-   LOGOUT
-========================= */
-
-document
-.getElementById("logoutBtn")
-.addEventListener(
-"click",
-()=>{
-
-  localStorage.removeItem(
-    "recall-user"
-  );
-
-  location.reload();
-});
-
-/* =========================
-   THEMES
-========================= */
-
-document
-.querySelectorAll(".theme")
-.forEach(theme=>{
-
-  theme.addEventListener(
-  "click",
-  ()=>{
-
-    document
-    .querySelectorAll(".theme")
-    .forEach(t=>
-      t.classList.remove("active")
-    );
-
-    theme.classList.add(
-      "active"
-    );
-
-    const color=
-      theme.dataset.theme;
-
-    document.documentElement
-    .style.setProperty(
-      "--theme",
-      color
-    );
-  });
-});
-
-/* =========================
-   INIT
-========================= */
-
-loadUser();
-
-renderLeaderboard();
-
-renderRooms();
-
-</script>
-
-</body>
-</html>
+```
